@@ -1,10 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "TimeGameGameMode.h"
-#include "TimeGameCharacter.h"
+#include "TimeGame/Public/Core/TgGameMode.h"
 #include "UObject/ConstructorHelpers.h"
 
-ATimeGameGameMode::ATimeGameGameMode()
+ATgGameMode::ATgGameMode()
 {
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));

@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
+#include "TimeGame/Public/Core/TgPlayerCharacter.h"
 
-#include "TimeGameCharacter.h"
+#include "AbilitySystemComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -10,13 +11,15 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "TimeGame/Public/Core/TgPlayerState.h"
+#include "TimeGame/Public/Gas/TgAsc.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
-// ATimeGameCharacter
+// ATgPlayerCharacter
 
-ATimeGameCharacter::ATimeGameCharacter()
+ATgPlayerCharacter::ATgPlayerCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -54,7 +57,40 @@ ATimeGameCharacter::ATimeGameCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
-void ATimeGameCharacter::BeginPlay()
+UAbilitySystemComponent* ATgPlayerCharacter::GetAbilitySystemComponent() const
+{
+	return Asc;
+}
+
+void ATgPlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (ATgPlayerState* Ps = GetPlayerState<ATgPlayerState>())
+	{
+		// Set the ASC on the Server. Clients do this in OnRep_PlayerState()
+		Asc = Cast<UTgAsc>(Ps->GetAbilitySystemComponent());
+
+		// AI won't have PlayerControllers so we can init again here just to be sure.
+		Ps->GetAbilitySystemComponent()->InitAbilityActorInfo(Ps, this);
+	}
+}
+
+void ATgPlayerCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	if (ATgPlayerState* Ps = GetPlayerState<ATgPlayerState>())
+	{
+		// Set the ASC for clients. Server does this in PossessedBy.
+		Asc = Cast<UTgAsc>(Ps->GetAbilitySystemComponent());
+
+		// Init ASC Actor Info for clients. Server will init its ASC when it possesses a new Actor.
+		Asc->InitAbilityActorInfo(Ps, this);
+	}
+}
+
+void ATgPlayerCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
@@ -63,7 +99,7 @@ void ATimeGameCharacter::BeginPlay()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void ATimeGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ATgPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
@@ -82,10 +118,10 @@ void ATimeGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATimeGameCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATgPlayerCharacter::Move);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATimeGameCharacter::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATgPlayerCharacter::Look);
 	}
 	else
 	{
@@ -93,7 +129,7 @@ void ATimeGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	}
 }
 
-void ATimeGameCharacter::Move(const FInputActionValue& Value)
+void ATgPlayerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -116,7 +152,7 @@ void ATimeGameCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void ATimeGameCharacter::Look(const FInputActionValue& Value)
+void ATgPlayerCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();

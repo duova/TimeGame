@@ -17,6 +17,15 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "GameplayAbilities",
+			"Enabled": true
+		},
+		{
+			"Name": "InventoryFrameworkPlugin",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher:\n//ue/marketplace/product/a692a7bae5e74787b67abcd2164ed05e"
 		}
 	]
 }

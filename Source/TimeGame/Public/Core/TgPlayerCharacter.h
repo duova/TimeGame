@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "TimeGameCharacter.generated.h"
+#include "TgPlayerCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -16,10 +17,10 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class ATimeGameCharacter : public ACharacter
+class ATgPlayerCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
-
+	
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -44,9 +45,17 @@ class ATimeGameCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	UPROPERTY()
+	UAbilitySystemComponent* Asc;
+
 public:
-	ATimeGameCharacter();
-	
+	ATgPlayerCharacter();
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void OnRep_PlayerState() override;
 
 protected:
 
