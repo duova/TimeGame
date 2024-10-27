@@ -8,6 +8,7 @@
 #include "Logging/LogMacros.h"
 #include "TgPlayerCharacter.generated.h"
 
+class UAbilityManagerComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -45,9 +46,6 @@ class ATgPlayerCharacter : public ACharacter, public IAbilitySystemInterface
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
-	UPROPERTY()
-	UAbilitySystemComponent* Asc;
-
 public:
 	ATgPlayerCharacter();
 
@@ -56,6 +54,15 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 	virtual void OnRep_PlayerState() override;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UInputAction*> ActiveAbilityInputActions;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UAbilityManagerComponent* AbilityManagerComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UAbilitySystemComponent* Asc;
 
 protected:
 

@@ -8,6 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnReceiveDamage, UAbilitySystemComponent*, Source, float, ProcessedShieldDamage, float, ProcessedHealthDamage, float, OriginalDamage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnReceiveHealing, UAbilitySystemComponent*, Source, float, ProcessedHealing, float, OriginalHealing);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHit, UAbilitySystemComponent*, Source, UAbilitySystemComponent*, Target);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TIMEGAME_API UTgAsc : public UAbilitySystemComponent
@@ -30,7 +31,13 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnReceiveHealing OnReceiveHealing;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnHit OnHitRegistry;
+
 	void BroadcastReceiveDamage(UAbilitySystemComponent* Source, const float ProcessedShieldDamage, const float ProcessedHealthDamage, const float OriginalDamage);
 
 	void BroadcastReceiveHealing(UAbilitySystemComponent* Source, const float ProcessedHealing, const float OriginalHealing);
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	void PerformOnHit(UAbilitySystemComponent* Target);
 };

@@ -34,3 +34,11 @@ void UTgAsc::BroadcastReceiveHealing(UAbilitySystemComponent* Source, const floa
 	}
 }
 
+void UTgAsc::PerformOnHit(UAbilitySystemComponent* Target)
+{
+	if (OnHitRegistry.IsBound())
+	{
+		OnHitRegistry.Broadcast(this, Target);
+	}
+}
+
