@@ -15,7 +15,7 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogTimeGame, Log, All);
 
 UCLASS(config=Game)
 class ATgPlayerCharacter : public ACharacter, public IAbilitySystemInterface

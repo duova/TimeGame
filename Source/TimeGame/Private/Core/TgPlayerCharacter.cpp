@@ -15,7 +15,7 @@
 #include "TimeGame/Public/Core/TgPlayerState.h"
 #include "TimeGame/Public/Gas/TgAsc.h"
 
-DEFINE_LOG_CATEGORY(LogTemplateCharacter);
+DEFINE_LOG_CATEGORY(LogTimeGame);
 
 //////////////////////////////////////////////////////////////////////////
 // ATgPlayerCharacter
@@ -130,7 +130,7 @@ void ATgPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	}
 	else
 	{
-		UE_LOG(LogTemplateCharacter, Error,
+		UE_LOG(LogTimeGame, Error,
 		       TEXT(
 			       "'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."
 		       ), *GetNameSafe(this));
