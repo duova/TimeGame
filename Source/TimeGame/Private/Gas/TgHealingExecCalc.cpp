@@ -10,12 +10,12 @@
 struct FTgHealingStatics
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Health);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(AntiHeal);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(HealMultiplier);
 
 	FTgHealingStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, Health, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, AntiHeal, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, HealMultiplier, Target, false);
 	}
 };
 
@@ -28,7 +28,7 @@ static const FTgHealingStatics& DamageStatics()
 UTgHealingExecCalc::UTgHealingExecCalc()
 {
 	RelevantAttributesToCapture.Add(DamageStatics().HealthDef);
-	RelevantAttributesToCapture.Add(DamageStatics().AntiHealDef);
+	RelevantAttributesToCapture.Add(DamageStatics().HealMultiplierDef);
 }
 
 void UTgHealingExecCalc::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -51,12 +51,12 @@ void UTgHealingExecCalc::Execute_Implementation(const FGameplayEffectCustomExecu
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
-	float AntiHeal = 0;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().AntiHealDef,
-															   EvaluationParameters, AntiHeal);
-	AntiHeal = FMath::Clamp<float>(AntiHeal, 0, 1);
+	float HealMultiplier = 0;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().HealMultiplierDef,
+															   EvaluationParameters, HealMultiplier);
+	HealMultiplier = FMath::Max<float>(HealMultiplier, 0);
 
-	Healing *= 1 - AntiHeal;
+	Healing *= HealMultiplier;
 
 	//Output healing
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().HealthProperty, EGameplayModOp::Additive, Healing));

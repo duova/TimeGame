@@ -30,6 +30,28 @@ bool ATgGameState::WorldStateContains(const FGameplayTag Tag) const
 	return WorldStates.Contains(Tag);
 }
 
+const ATgAiCharacter* ATgGameState::GetAiCharacterByNameTag(const FGameplayTag NameTag) const
+{
+	if (AiCharacterRegistry.Contains(NameTag))
+	{
+		return AiCharacterRegistry[NameTag];
+	}
+	return nullptr;
+}
+
+void ATgGameState::RegisterAiCharacter(const FGameplayTag& NameTag, ATgAiCharacter* Character)
+{
+	if (!HasAuthority()) return;
+	if (AiCharacterRegistry.Contains(NameTag))
+	{
+		AiCharacterRegistry[NameTag] = Character;
+	}
+	else
+	{
+		AiCharacterRegistry.Add(NameTag, Character);
+	}
+}
+
 void ATgGameState::BeginPlay()
 {
 	Super::BeginPlay();

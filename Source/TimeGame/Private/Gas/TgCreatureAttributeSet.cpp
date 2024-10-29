@@ -28,7 +28,7 @@ void UTgCreatureAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME_CONDITION_NOTIFY(UTgCreatureAttributeSet, MagicalArmor, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UTgCreatureAttributeSet, Lifesteal, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UTgCreatureAttributeSet, MovementSpeed, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UTgCreatureAttributeSet, AntiHeal, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UTgCreatureAttributeSet, HealMultiplier, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UTgCreatureAttributeSet, DamageOutgoingMultiplier, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UTgCreatureAttributeSet, DamageIncomingMultiplier, COND_None, REPNOTIFY_Always);
 }
@@ -92,9 +92,9 @@ void UTgCreatureAttributeSet::PreAttributeChange(const FGameplayAttribute& Attri
 		NewValue = FMath::Max<float>(0, NewValue);
 	}
 
-	if (Attribute == GetAntiHealAttribute())
+	if (Attribute == GetHealMultiplierAttribute())
 	{
-		NewValue = FMath::Clamp<float>(NewValue, 0, 1);
+		NewValue = FMath::Max<float>(0, NewValue);
 	}
 
 	if (Attribute == GetDamageOutgoingMultiplierAttribute())
@@ -208,9 +208,9 @@ void UTgCreatureAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& 
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UTgCreatureAttributeSet, MovementSpeed, OldMovementSpeed);
 }
 
-void UTgCreatureAttributeSet::OnRep_AntiHeal(const FGameplayAttributeData& OldAntiHeal)
+void UTgCreatureAttributeSet::OnRep_HealMultiplier(const FGameplayAttributeData& OldHealMultiplier)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UTgCreatureAttributeSet, AntiHeal, OldAntiHeal);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UTgCreatureAttributeSet, HealMultiplier, OldHealMultiplier);
 }
 
 void UTgCreatureAttributeSet::OnRep_DamageOutgoingMultiplier(const FGameplayAttributeData& OldDamageOutgoingMultiplier)

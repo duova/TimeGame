@@ -34,8 +34,8 @@ ATgPlayerState::ATgPlayerState()
 	AttributeSet->InitMagicalArmor(0);
 	AttributeSet->InitAlchemicalArmor(0);
 	AttributeSet->InitLifesteal(0);
-	AttributeSet->InitAntiHeal(0);
-	AttributeSet->InitMovementSpeed(4000);
+	AttributeSet->InitHealMultiplier(1);
+	AttributeSet->InitMovementSpeed(500);
 	AttributeSet->InitDamageIncomingMultiplier(1);
 	AttributeSet->InitDamageOutgoingMultiplier(1);
 }

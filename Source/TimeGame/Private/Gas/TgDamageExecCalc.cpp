@@ -11,7 +11,7 @@
 struct FTgHealingStatics
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Health);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(AntiHeal);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(HealMultiplier);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Shield);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalArmor);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(FireArmor);
@@ -26,7 +26,7 @@ struct FTgHealingStatics
 	FTgHealingStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, Health, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, AntiHeal, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, HealMultiplier, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, Shield, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, PhysicalArmor, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, FireArmor, Target, false);
@@ -59,7 +59,7 @@ UTgDamageExecCalc::UTgDamageExecCalc()
 	RelevantAttributesToCapture.Add(DamageStatics().DamageOutgoingMultiplierDef);
 	RelevantAttributesToCapture.Add(DamageStatics().DamageIncomingMultiplierDef);
 	RelevantAttributesToCapture.Add(DamageStatics().HealthDef);
-	RelevantAttributesToCapture.Add(DamageStatics().AntiHealDef);
+	RelevantAttributesToCapture.Add(DamageStatics().HealMultiplierDef);
 }
 
 void UTgDamageExecCalc::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -177,11 +177,11 @@ void UTgDamageExecCalc::Execute_Implementation(const FGameplayEffectCustomExecut
 		Lifesteal = FMath::Max<float>(Lifesteal, 0);
 		const float StolenHealth = Lifesteal * Damage;
 		
-		float AntiHeal = 0;
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().AntiHealDef,
-																   EvaluationParameters, AntiHeal);
-		AntiHeal = FMath::Clamp<float>(AntiHeal, 0, 1);
-		const float ProcessedStolenHealth = StolenHealth * (1 - AntiHeal);
+		float HealMultiplier = 0;
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().HealMultiplierDef,
+																   EvaluationParameters, HealMultiplier);
+		HealMultiplier = FMath::Max<float>(0, HealMultiplier);
+		const float ProcessedStolenHealth = StolenHealth * HealMultiplier;
 
 		UGameplayEffect* GELifesteal = NewObject<UGameplayEffect>(GetTransientPackage(), FName(TEXT("Lifesteal")));
 		GELifesteal->DurationPolicy = EGameplayEffectDurationType::Instant;

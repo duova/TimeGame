@@ -33,7 +33,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHit OnHitRegistry;
-
+	
 	void BroadcastReceiveDamage(UAbilitySystemComponent* Source, const float ProcessedShieldDamage, const float ProcessedHealthDamage, const float OriginalDamage);
 
 	void BroadcastReceiveHealing(UAbilitySystemComponent* Source, const float ProcessedHealing, const float OriginalHealing);

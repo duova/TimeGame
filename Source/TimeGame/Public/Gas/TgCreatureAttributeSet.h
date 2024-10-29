@@ -208,14 +208,14 @@ public:
 	UFUNCTION()
 	virtual void OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed);
 
-	//AntiHeal
+	//HealMultiplier
 	
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_AntiHeal)
-	FGameplayAttributeData AntiHeal;
-	ATTRIBUTE_ACCESSORS(UTgCreatureAttributeSet, AntiHeal)
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_HealMultiplier)
+	FGameplayAttributeData HealMultiplier;
+	ATTRIBUTE_ACCESSORS(UTgCreatureAttributeSet, HealMultiplier)
 
 	UFUNCTION()
-	virtual void OnRep_AntiHeal(const FGameplayAttributeData& OldAntiHeal);
+	virtual void OnRep_HealMultiplier(const FGameplayAttributeData& OldHealMultiplier);
 
 	//DamageOutgoingMultiplier
 	

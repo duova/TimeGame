@@ -7,6 +7,8 @@
 #include "GameFramework/GameState.h"
 #include "TgGameState.generated.h"
 
+class ATgAiCharacter;
+
 USTRUCT(BlueprintType)
 struct FTagIntPair
 {
@@ -37,9 +39,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FTagIntPair> InitialWorldStates;
 
+	UFUNCTION(BlueprintPure, BlueprintAuthorityOnly)
+	const ATgAiCharacter* GetAiCharacterByNameTag(const FGameplayTag NameTag) const;
+
+	void RegisterAiCharacter(const FGameplayTag& NameTag, ATgAiCharacter* Character);
+
 protected:
 	UPROPERTY()
 	TMap<FGameplayTag, int32> WorldStates;
+
+	UPROPERTY()
+	TMap<FGameplayTag, ATgAiCharacter*> AiCharacterRegistry;
 
 	virtual void BeginPlay() override;
 };
