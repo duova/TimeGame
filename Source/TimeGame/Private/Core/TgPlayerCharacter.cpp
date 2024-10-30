@@ -11,6 +11,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Gas/TgCreatureAttributeSet.h"
 #include "Inventory/AbilityManagerComponent.h"
 #include "TimeGame/Public/Core/TgPlayerState.h"
 #include "TimeGame/Public/Gas/TgAsc.h"
@@ -78,6 +79,15 @@ void ATgPlayerCharacter::PossessedBy(AController* NewController)
 		// AI won't have PlayerControllers so we can init again here just to be sure.
 		Ps->GetAbilitySystemComponent()->InitAbilityActorInfo(Ps, this);
 	}
+
+	if (MovementSpeedAttribute.IsValid())
+	{
+		Asc->GetGameplayAttributeValueChangeDelegate(MovementSpeedAttribute).AddUObject(this, &ATgPlayerCharacter::OnMovementSpeedAttributeUpdated);
+	}
+	else
+	{
+		UE_LOG(LogTimeGame, Error, TEXT("MovementSpeed attribute needs to be set on PlayerCharacter."));
+	}
 }
 
 void ATgPlayerCharacter::OnRep_PlayerState()
@@ -92,6 +102,11 @@ void ATgPlayerCharacter::OnRep_PlayerState()
 		// Init ASC Actor Info for clients. Server will init its ASC when it possesses a new Actor.
 		Asc->InitAbilityActorInfo(Ps, this);
 	}
+}
+
+void ATgPlayerCharacter::OnMovementSpeedAttributeUpdated(const FOnAttributeChangeData& Data) const
+{
+	GetCharacterMovement()->MaxWalkSpeed = Data.NewValue;
 }
 
 void ATgPlayerCharacter::BeginPlay()

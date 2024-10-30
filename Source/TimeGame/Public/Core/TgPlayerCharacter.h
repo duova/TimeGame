@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "AttributeSet.h"
 #include "GameFramework/Character.h"
+#include "Gas/AsyncTaskAttributeChanged.h"
 #include "Logging/LogMacros.h"
 #include "TgPlayerCharacter.generated.h"
 
@@ -71,7 +73,6 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
 
 protected:
 	// APawn interface
@@ -79,6 +80,11 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+	void OnMovementSpeedAttributeUpdated(const FOnAttributeChangeData& Data) const;
+
+	UPROPERTY(EditAnywhere)
+	FGameplayAttribute MovementSpeedAttribute;
 
 public:
 	/** Returns CameraBoom subobject **/
