@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
+#include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -24,7 +25,7 @@ AProjectileBase::AProjectileBase()
 	ProjectileMovementComponent->SetIsReplicated(true);
 
 	CollisionComponent->SetGenerateOverlapEvents(true);
-	CollisionComponent->SetNotifyRigidBodyCollision(true);
+	CollisionComponent->SetNotifyRigidBodyCollision(false);
 
 	ProjectileMovementComponent->bRotationFollowsVelocity;
 	ProjectileMovementComponent->bInterpMovement = true;
@@ -38,15 +39,20 @@ AProjectileBase::AProjectileBase()
 }
 
 AProjectileBase* AProjectileBase::SpawnProjectile(UObject* WorldContextObject,
-	const TSubclassOf<AProjectileBase>& ProjectileClass, const FGameplayEffectSpecHandle& EffectSpecOnOverlap, const FVector& Origin, const FVector& Direction, const bool bInDestroyOnOverlap, const TArray<AActor*>& InActorsToIgnore)
+	const TSubclassOf<AProjectileBase>& ProjectileClass, const TArray<FGameplayEffectSpecHandle>& EffectSpecsOnOverlap,
+	const FVector& Origin, const FVector& Direction, const bool bInDestroyOnOverlap, const TArray<AActor*>& InActorsToIgnore,
+	const bool bInCreateZone, const FZoneParams& InZoneParams)
 {
 	const FRotator Rot = Direction.Rotation();
 	AProjectileBase* Projectile = WorldContextObject->GetWorld()->SpawnActorDeferred<AProjectileBase>(ProjectileClass, FTransform(Rot, Origin));
 
-	Projectile->OverlapEffectSpec = EffectSpecOnOverlap;
+	Projectile->OverlapEffectSpecs = EffectSpecsOnOverlap;
 
 	Projectile->ActorsToIgnore = InActorsToIgnore;
 	Projectile->bDestroyOnOverlap = bInDestroyOnOverlap;
+
+	Projectile->bCreateZone = bInCreateZone;
+	Projectile->ZoneParams = InZoneParams;
 
 	UGameplayStatics::FinishSpawningActor(Projectile, FTransform(Rot, Origin));
 
@@ -70,11 +76,18 @@ void AProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	{
 		if (UAbilitySystemComponent* Asc = TargetAscInterface->GetAbilitySystemComponent())
 		{
-			if (!OverlapEffectSpec.Data) return;
+			for (FGameplayEffectSpecHandle Spec : OverlapEffectSpecs)
+			{
+				if (!Spec.Data) continue;
 			
-			OverlapEffectSpec.Data->GetContext().AddHitResult(SweepResult);
-			Asc->BP_ApplyGameplayEffectSpecToTarget(OverlapEffectSpec, Asc);
+				Spec.Data->GetContext().AddHitResult(SweepResult);
+				Asc->BP_ApplyGameplayEffectSpecToTarget(Spec, Asc);
+			}
 		}
+	}
+	if (bCreateZone)
+	{
+		AZoneBase::SpawnZone(Other, SweepResult.ImpactPoint, ZoneParams);
 	}
 	if (bDestroyOnOverlap) Destroy(true);
 }

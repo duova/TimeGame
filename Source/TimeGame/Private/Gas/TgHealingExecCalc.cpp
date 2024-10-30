@@ -19,7 +19,7 @@ struct FTgHealingStatics
 	}
 };
 
-static const FTgHealingStatics& DamageStatics()
+static const FTgHealingStatics& HealingStatics()
 {
 	static FTgHealingStatics HStatics;
 	return HStatics;
@@ -27,8 +27,8 @@ static const FTgHealingStatics& DamageStatics()
 
 UTgHealingExecCalc::UTgHealingExecCalc()
 {
-	RelevantAttributesToCapture.Add(DamageStatics().HealthDef);
-	RelevantAttributesToCapture.Add(DamageStatics().HealMultiplierDef);
+	RelevantAttributesToCapture.Add(HealingStatics().HealthDef);
+	RelevantAttributesToCapture.Add(HealingStatics().HealMultiplierDef);
 }
 
 void UTgHealingExecCalc::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -52,14 +52,14 @@ void UTgHealingExecCalc::Execute_Implementation(const FGameplayEffectCustomExecu
 	EvaluationParameters.TargetTags = TargetTags;
 
 	float HealMultiplier = 0;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().HealMultiplierDef,
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(HealingStatics().HealMultiplierDef,
 															   EvaluationParameters, HealMultiplier);
 	HealMultiplier = FMath::Max<float>(HealMultiplier, 0);
 
 	Healing *= HealMultiplier;
 
 	//Output healing
-	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().HealthProperty, EGameplayModOp::Additive, Healing));
+	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(HealingStatics().HealthProperty, EGameplayModOp::Additive, Healing));
 
 	//Broadcast healing
 	if (UTgAsc* TargetAsc = Cast<UTgAsc>(TargetAbilitySystemComponent))
