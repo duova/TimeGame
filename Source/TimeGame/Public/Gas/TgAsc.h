@@ -33,6 +33,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHit OnHitRegistry;
+
+	//Effects where their source has the highest value has the staying power.
+	UPROPERTY(EditAnywhere)
+	FGameplayAttribute EffectSelectionAttribute = FGameplayAttribute();
 	
 	void BroadcastReceiveDamage(UAbilitySystemComponent* Source, const float ProcessedShieldDamage, const float ProcessedHealthDamage, const float OriginalDamage);
 
@@ -40,4 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	void PerformOnHit(UAbilitySystemComponent* Target);
+
+	UFUNCTION()
+	void OnServerActiveGameplayEffectAdded(UAbilitySystemComponent* Asc, const FGameplayEffectSpec& Spec, FActiveGameplayEffectHandle EffectHandle) const;
 };

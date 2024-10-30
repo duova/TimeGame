@@ -14,7 +14,7 @@ class TIMEGAME_API ATgPlayerState : public APlayerState, public IAbilitySystemIn
 {
 	GENERATED_BODY()
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	UAbilitySystemComponent* Asc;
 
 	UPROPERTY()
