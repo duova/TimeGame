@@ -8,7 +8,7 @@
 #include "TimeGame/Public/Gas/TgHealingExecCalc.h"
 
 // Declare the attributes to capture and define how we want to capture them from the Source and Target.
-struct FTgHealingStatics
+struct FTgDamageStatics
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Health);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(HealMultiplier);
@@ -23,7 +23,7 @@ struct FTgHealingStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DamageOutgoingMultiplier);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DamageIncomingMultiplier);
 
-	FTgHealingStatics()
+	FTgDamageStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, Health, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UTgCreatureAttributeSet, HealMultiplier, Target, false);
@@ -40,9 +40,9 @@ struct FTgHealingStatics
 	}
 };
 
-static const FTgHealingStatics& DamageStatics()
+static const FTgDamageStatics& DamageStatics()
 {
-	static FTgHealingStatics DStatics;
+	static FTgDamageStatics DStatics;
 	return DStatics;
 }
 
