@@ -107,6 +107,12 @@ void ATgPlayerCharacter::OnRep_PlayerState()
 void ATgPlayerCharacter::OnMovementSpeedAttributeUpdated(const FOnAttributeChangeData& Data) const
 {
 	GetCharacterMovement()->MaxWalkSpeed = Data.NewValue;
+	Client_OnMovementSpeedAttributeUpdated(Data.NewValue);
+}
+
+void ATgPlayerCharacter::Client_OnMovementSpeedAttributeUpdated_Implementation(const float Speed) const
+{
+	GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
 
 void ATgPlayerCharacter::BeginPlay()

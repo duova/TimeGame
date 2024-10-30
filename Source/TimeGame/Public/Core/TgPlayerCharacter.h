@@ -83,6 +83,9 @@ protected:
 
 	void OnMovementSpeedAttributeUpdated(const FOnAttributeChangeData& Data) const;
 
+	UFUNCTION(Client, Reliable)
+	void Client_OnMovementSpeedAttributeUpdated(const float Speed) const;
+
 	UPROPERTY(EditAnywhere)
 	FGameplayAttribute MovementSpeedAttribute;
 
